@@ -51,7 +51,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     function updateClock() {
         const now = new Date();
-        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Makassar' };
+        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
         const el = document.getElementById('liveClock');
         if (el) el.textContent = now.toLocaleDateString('id-ID', options);
     }
