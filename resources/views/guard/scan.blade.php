@@ -26,7 +26,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-900 dark:text-white">Scan QR</h1>
-            <p class="text-gray-500 dark:text-gray-400 text-sm">Arahkan kamera ke QR Code checkpoint</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm" x-text="clock"></p>
         </div>
         <a href="{{ route('guard.patrol.active') }}" class="text-sm text-orange-500 font-medium">Kembali</a>
     </div>
@@ -125,10 +125,20 @@ function scanner() {
         notes: '',
         popup: { show: false, type: '', title: '', message: '' },
         submitting: false,
+        clock: '',
 
         init() {
             this.getLocation();
             this.startScanner();
+            this.updateClock();
+            setInterval(() => this.updateClock(), 1000);
+        },
+
+        updateClock() {
+            this.clock = new Date().toLocaleString('id-ID', {
+                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
         },
 
         getLocation() {
