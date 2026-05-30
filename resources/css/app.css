@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { @apply bg-transparent; }
+    ::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-dark-600 rounded-full; }
+}
+
+@layer components {
+    .card {
+        @apply bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 shadow-sm;
+    }
+    .btn-primary {
+        @apply px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-700 text-white font-medium rounded-xl
+               hover:from-orange-600 hover:to-orange-800 transition-all active:scale-[0.98];
+    }
+    .btn-danger {
+        @apply px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-700 text-white font-medium rounded-xl
+               hover:from-red-600 hover:to-red-800 transition-all active:scale-[0.98];
+    }
+    .input-field {
+        @apply w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700
+               text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all
+               placeholder:text-gray-400;
+    }
+    .stat-card {
+        @apply bg-white dark:bg-dark-800 rounded-2xl p-5 border border-gray-200 dark:border-dark-700
+               hover:shadow-lg transition-all duration-200;
+    }
+    .badge {
+        @apply inline-flex px-2.5 py-1 rounded-lg text-xs font-medium;
+    }
+    .badge-success { @apply bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400; }
+    .badge-warning { @apply bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400; }
+    .badge-danger { @apply bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400; }
+    .badge-info { @apply bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400; }
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
+
+.pagination { @apply flex items-center gap-1; }
+.pagination .page-link { @apply px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700; }
+.pagination .active .page-link { @apply bg-orange-500 text-white hover:bg-orange-600; }
