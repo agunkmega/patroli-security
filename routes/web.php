@@ -32,10 +32,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('guards/{guard}', [GuardController::class, 'show'])->name('guards.show');
 
         Route::resource('areas', AreaController::class)->except(['show']);
+        Route::get('checkpoints/print-all-qr', [CheckpointController::class, 'printAllQR'])->name('checkpoints.print-all-qr');
         Route::resource('checkpoints', CheckpointController::class);
         Route::post('checkpoints/{checkpoint}/generate-qr', [CheckpointController::class, 'generateQR'])->name('checkpoints.generate-qr');
         Route::get('checkpoints/{checkpoint}/print-qr', [CheckpointController::class, 'printQR'])->name('checkpoints.print-qr');
-        Route::get('checkpoints/print-all-qr', [CheckpointController::class, 'printAllQR'])->name('checkpoints.print-all-qr');
 
         Route::resource('schedules', ScheduleController::class);
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
