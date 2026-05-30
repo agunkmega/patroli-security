@@ -4,11 +4,12 @@
     "description": "Aplikasi Patroli Security dengan QR Code",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^12.0",
-        "laravel/breeze": "^2.0",
-        "simplesoftwareio/simple-qrcode": "^2.0",
         "barryvdh/laravel-dompdf": "^3.0",
+        "laravel/breeze": "^2.0",
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "*",
         "maatwebsite/excel": "^3.1",
+        "simplesoftwareio/simple-qrcode": "^2.0",
         "spatie/laravel-activitylog": "^4.0"
     },
     "require-dev": {
