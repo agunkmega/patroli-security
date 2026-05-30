@@ -8,10 +8,14 @@ use App\Models\Checkpoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\QRCodeService;
 
 class CheckpointController extends Controller
 {
+    public function __construct(
+        protected QRCodeService $qrCodeService,
+    ) {}
+
     public function index()
     {
         $checkpoints = Checkpoint::with('area')->latest()->paginate(15);
@@ -47,7 +51,7 @@ class CheckpointController extends Controller
 
         $checkpoint = Checkpoint::create($validated);
 
-        $this->generateQRCode($checkpoint);
+        $this->qrCodeService->generate($checkpoint);
 
         return redirect()->route('admin.checkpoints.index')
             ->with('success', 'Checkpoint berhasil ditambahkan.');
@@ -89,7 +93,7 @@ class CheckpointController extends Controller
         $checkpoint->update($validated);
 
         if ($request->boolean('regenerate_qr')) {
-            $this->generateQRCode($checkpoint);
+            $this->qrCodeService->generate($checkpoint);
         }
 
         return redirect()->route('admin.checkpoints.index')
@@ -109,7 +113,7 @@ class CheckpointController extends Controller
 
     public function generateQR(Checkpoint $checkpoint)
     {
-        $this->generateQRCode($checkpoint);
+        $this->qrCodeService->generate($checkpoint);
         return back()->with('success', 'QR Code berhasil digenerate ulang.');
     }
 
@@ -125,35 +129,4 @@ class CheckpointController extends Controller
         return view('admin.qrcode.print-all', compact('checkpoints'));
     }
 
-    private function generateQRCode(Checkpoint $checkpoint): void
-    {
-        try {
-            $qrData = json_encode([
-                'type' => 'checkpoint',
-                'code' => $checkpoint->code,
-                'id' => $checkpoint->id,
-                'name' => $checkpoint->name,
-            ]);
-
-            $filename = "qr-checkpoint-{$checkpoint->code}.png";
-            $path = "qr-codes/{$filename}";
-
-            if (!Storage::disk('public')->exists('qr-codes')) {
-                Storage::disk('public')->makeDirectory('qr-codes');
-            }
-
-            QrCode::format('png')
-                ->size(400)
-                ->margin(2)
-                ->color(233, 88, 12)
-                ->generate($qrData, Storage::disk('public')->path($path));
-
-            $checkpoint->update([
-                'qr_code' => $qrData,
-                'qr_path' => $path,
-            ]);
-        } catch (\Exception $e) {
-            report($e);
-        }
-    }
 }
