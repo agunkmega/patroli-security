@@ -15,6 +15,9 @@
     }
     #qr-scanner__dashboard_section_csr button:hover { background: #ea580c !important; }
     #qr-scanner__dashboard_section_csr span { color: #94a3b8 !important; }
+    .popup-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); padding: 1rem; }
+    .popup-card { background: white; border-radius: 20px; padding: 2rem; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+    .dark .popup-card { background: #1e1b2e; }
 </style>
 @endsection
 
@@ -30,6 +33,25 @@
 
     <div class="bg-white dark:bg-dark-800 rounded-2xl p-1 border border-gray-200 dark:border-dark-700 overflow-hidden">
         <div id="qr-scanner" x-ref="scanner"></div>
+    </div>
+
+    <div x-show="popup.show" class="popup-overlay" x-transition @click.away="popup.show = false">
+        <div class="popup-card">
+            <div x-show="popup.type === 'success'" class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div x-show="popup.type === 'error'" class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div x-show="popup.type === 'warning'" class="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-100 flex items-center justify-center">
+                <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2" x-text="popup.title"></h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6" x-text="popup.message"></p>
+            <button @click="popup.show = false; if (popup.type === 'success') showForm()" class="w-full py-3 rounded-xl font-semibold text-white transition-all"
+                    :class="popup.type === 'success' ? 'bg-gradient-to-r from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800' : 'bg-gray-500 hover:bg-gray-600'"
+                    x-text="popup.type === 'success' ? 'Lanjutkan' : 'Tutup'"></button>
+        </div>
     </div>
 
     <div x-show="scanResult" class="bg-white dark:bg-dark-800 rounded-2xl p-4 border border-gray-200 dark:border-dark-700" x-transition>
@@ -101,6 +123,8 @@ function scanner() {
         status: 'safe',
         condition: '',
         notes: '',
+        popup: { show: false, type: '', title: '', message: '' },
+        submitting: false,
 
         init() {
             this.getLocation();
@@ -153,19 +177,99 @@ function scanner() {
             }
 
             this.html5QrCode.stop();
-            this.scanResult = true;
 
             if (navigator.vibrate) navigator.vibrate(200);
 
             try {
-                const utterance = new SpeechSynthesisUtterance('Checkpoint ditemukan');
+                const utterance = new SpeechSynthesisUtterance('Memvalidasi checkpoint');
                 utterance.lang = 'id-ID';
                 speechSynthesis.speak(utterance);
             } catch(e) {}
+
+            this.validateCheckpoint();
+        },
+
+        validateCheckpoint() {
+            fetch('{{ route("guard.patrol.validate-checkpoint", $patrol->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    checkpoint_code: this.checkpointCode,
+                    latitude: this.latitude,
+                    longitude: this.longitude,
+                })
+            })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw err; });
+                return res.json();
+            })
+            .then(data => {
+                this.popup = {
+                    show: true,
+                    type: 'success',
+                    title: 'Checkpoint Valid',
+                    message: data.message + ' (Jarak: ' + data.distance + 'm)',
+                };
+            })
+            .catch((err) => {
+                this.popup = {
+                    show: true,
+                    type: 'error',
+                    title: 'Luar Radius',
+                    message: err.message || 'Terjadi kesalahan validasi.',
+                };
+            });
+        },
+
+        showForm() {
+            this.scanResult = true;
         },
 
         submitScan() {
-            this.$refs.scanForm.submit();
+            if (this.submitting) return;
+            this.submitting = true;
+
+            const formData = new FormData(this.$refs.scanForm);
+
+            fetch(this.$refs.scanForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw err; });
+                return res.json();
+            })
+            .then(data => {
+                this.submitting = false;
+                this.popup = {
+                    show: true,
+                    type: 'success',
+                    title: 'Scan Berhasil',
+                    message: data.message,
+                };
+                this.scanResult = false;
+                this.startScanner();
+                if (data.patrol_completed) {
+                    setTimeout(() => window.location.href = '{{ route("guard.dashboard") }}', 2000);
+                }
+            })
+            .catch((err) => {
+                this.submitting = false;
+                this.popup = {
+                    show: true,
+                    type: 'error',
+                    title: 'Scan Gagal',
+                    message: err.message || 'Terjadi kesalahan.',
+                };
+            });
         }
     }
 }

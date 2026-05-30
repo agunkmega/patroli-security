@@ -102,6 +102,45 @@ class PatrolController extends Controller
         return view('guard.active-patrol', compact('patrol'));
     }
 
+    public function validateCheckpoint(Request $request, Patrol $patrol)
+    {
+        $this->authorizeGuard($patrol);
+
+        $validated = $request->validate([
+            'checkpoint_code' => 'required|string|exists:checkpoints,code',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $checkpoint = Checkpoint::where('code', $validated['checkpoint_code'])->firstOrFail();
+
+        $distance = $this->calculateDistance(
+            $validated['latitude'], $validated['longitude'],
+            $checkpoint->latitude, $checkpoint->longitude
+        );
+
+        $maxRadius = $checkpoint->radius ?? config('patrol.radius_meters', 30);
+
+        if ($distance > $maxRadius) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Anda berada di luar radius checkpoint. Jarak: ' . round($distance, 1) . 'm (maks: ' . $maxRadius . 'm)',
+                'distance' => round($distance, 2),
+                'max_radius' => $maxRadius,
+            ]);
+        }
+
+        return response()->json([
+            'valid' => true,
+            'message' => 'Checkpoint valid, silakan isi kondisi.',
+            'checkpoint' => [
+                'name' => $checkpoint->name,
+                'code' => $checkpoint->code,
+            ],
+            'distance' => round($distance, 2),
+        ]);
+    }
+
     public function scan(Patrol $patrol)
     {
         $this->authorizeGuard($patrol);

@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/patrol/active', [PatrolController::class, 'activePatrol'])->name('patrol.active');
         Route::get('/patrol/{patrol}/scan', [PatrolController::class, 'scan'])->name('patrol.scan');
         Route::post('/patrol/{patrol}/scan', [PatrolController::class, 'processScan'])->name('patrol.scan.process');
+        Route::post('/patrol/{patrol}/validate-checkpoint', [PatrolController::class, 'validateCheckpoint'])->name('patrol.validate-checkpoint');
         Route::post('/patrol/{patrol}/complete', [PatrolController::class, 'completePatrol'])->name('patrol.complete');
         Route::get('/history', [PatrolController::class, 'history'])->name('history');
     });
