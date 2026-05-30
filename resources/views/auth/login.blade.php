@@ -59,26 +59,7 @@
             </button>
         </form>
 
-        <div class="mt-8 p-4 rounded-xl bg-white/5 border border-gray-600/20">
-            <p class="text-xs font-medium text-gray-400 mb-2 text-center">Akun Demo:</p>
-            <div class="grid grid-cols-3 gap-2 text-[10px]">
-                <div class="text-center p-2 rounded-lg bg-white/5">
-                    <p class="text-orange-400 font-semibold">Admin</p>
-                    <p class="text-gray-500">admin@patroli.com</p>
-                    <p class="text-gray-500">password</p>
-                </div>
-                <div class="text-center p-2 rounded-lg bg-white/5">
-                    <p class="text-orange-400 font-semibold">Supervisor</p>
-                    <p class="text-gray-500">supervisor@patroli.com</p>
-                    <p class="text-gray-500">password</p>
-                </div>
-                <div class="text-center p-2 rounded-lg bg-white/5">
-                    <p class="text-orange-400 font-semibold">Guard</p>
-                    <p class="text-gray-500">guard@patroli.com</p>
-                    <p class="text-gray-500">password</p>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 @endsection

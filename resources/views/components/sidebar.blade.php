@@ -1,4 +1,4 @@
-<aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-white dark:bg-dark-800 border-r border-gray-200 dark:border-dark-700 shadow-lg" x-data="{ isOpen: window.innerWidth >= 1024 }" x-init="$store.sidebar = { isOpen: isOpen }; $watch('isOpen', val => $store.sidebar.isOpen = val)">
+<aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform bg-white dark:bg-dark-800 border-r border-gray-200 dark:border-dark-700 shadow-lg" x-data="{ sidebarOpen: window.innerWidth >= 1024 }" x-init="$store.sidebar = { isOpen: sidebarOpen }; $watch('sidebarOpen', val => $store.sidebar.isOpen = val); $watch('$store.sidebar.isOpen', val => { if (window.innerWidth < 1024) sidebarOpen = val })" :class="sidebarOpen || window.innerWidth >= 1024 ? 'translate-x-0' : '-translate-x-full'">
     <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-dark-700">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg">
@@ -9,7 +9,7 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->role->label() }}</p>
             </div>
         </div>
-        <button @click="isOpen = !isOpen" class="lg:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700">
+        <button @click="sidebarOpen = false; $store.sidebar.isOpen = false" class="lg:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
     </div>

@@ -25,6 +25,7 @@
 
     @if(Auth::check())
         @include('components.sidebar')
+        <div x-show="$store.sidebar?.isOpen && window.innerWidth < 1024" @click="$store.sidebar.isOpen = false" class="fixed inset-0 z-30 bg-black/50 lg:hidden" x-transition.opacity></div>
     @endif
 
     <div :class="{ 'lg:ml-64': $store.sidebar?.isOpen }" class="min-h-screen transition-all duration-300">
