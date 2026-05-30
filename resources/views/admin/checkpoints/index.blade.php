@@ -11,6 +11,10 @@
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.checkpoints.print-all-qr') }}" class="px-4 py-2.5 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all">Print All QR</a>
+            <form method="POST" action="{{ route('admin.checkpoints.regenerate-all') }}" onsubmit="return confirm('Regenerate semua QR code?')" class="inline">
+                @csrf
+                <button type="submit" class="px-4 py-2.5 border border-green-300 dark:border-green-800 text-green-700 dark:text-green-400 font-medium rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20 transition-all cursor-pointer">Regen All QR</button>
+            </form>
             <a href="{{ route('admin.checkpoints.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-700 text-white font-medium rounded-xl hover:from-orange-600 hover:to-orange-800 transition-all shadow-lg shadow-orange-500/20">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 Tambah Checkpoint
@@ -54,7 +58,11 @@
                                 <a href="{{ route('admin.checkpoints.show', $cp) }}" class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 hover:bg-blue-100">Lihat</a>
                                 <a href="{{ route('admin.checkpoints.edit', $cp) }}" class="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 hover:bg-orange-100">Edit</a>
                                 <a href="{{ route('admin.checkpoints.print-qr', $cp) }}" target="_blank" class="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 hover:bg-purple-100">QR</a>
-                                <form method="POST" action="{{ route('admin.checkpoints.destroy', $cp) }}" onsubmit="return confirm('Hapus checkpoint?')">
+                                <form method="POST" action="{{ route('admin.checkpoints.generate-qr', $cp) }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="p-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100">Regen QR</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.checkpoints.destroy', $cp) }}" onsubmit="return confirm('Hapus checkpoint?')" class="inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 hover:bg-red-100">Hapus</button>
                                 </form>

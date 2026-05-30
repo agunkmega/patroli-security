@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('areas', AreaController::class)->except(['show']);
         Route::get('checkpoints/print-all-qr', [CheckpointController::class, 'printAllQR'])->name('checkpoints.print-all-qr');
+        Route::post('checkpoints/regenerate-all', [CheckpointController::class, 'regenerateAllQR'])->name('checkpoints.regenerate-all');
         Route::resource('checkpoints', CheckpointController::class);
         Route::post('checkpoints/{checkpoint}/generate-qr', [CheckpointController::class, 'generateQR'])->name('checkpoints.generate-qr');
         Route::get('checkpoints/{checkpoint}/print-qr', [CheckpointController::class, 'printQR'])->name('checkpoints.print-qr');

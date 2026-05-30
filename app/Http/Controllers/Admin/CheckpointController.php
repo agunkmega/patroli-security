@@ -123,6 +123,16 @@ class CheckpointController extends Controller
         return view('admin.qrcode.print', compact('checkpoint'));
     }
 
+    public function regenerateAllQR()
+    {
+        $checkpoints = Checkpoint::all();
+        foreach ($checkpoints as $checkpoint) {
+            $this->qrCodeService->generate($checkpoint);
+        }
+
+        return back()->with('success', 'Semua QR code berhasil diregenerate ulang.');
+    }
+
     public function printAllQR()
     {
         $checkpoints = Checkpoint::with('area')->where('is_active', true)->get();

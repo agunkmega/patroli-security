@@ -64,6 +64,10 @@
                     <div class="mt-4 space-y-2">
                         <a href="{{ route('admin.checkpoints.print-qr', $checkpoint) }}" target="_blank" class="block w-full px-4 py-2 bg-purple-500 text-white rounded-xl text-sm hover:bg-purple-600">Print QR</a>
                         <a href="{{ route('qrcode.download', $checkpoint) }}" class="block w-full px-4 py-2 bg-orange-500 text-white rounded-xl text-sm hover:bg-orange-600">Download PNG</a>
+                        <form method="POST" action="{{ route('admin.checkpoints.generate-qr', $checkpoint) }}">
+                            @csrf
+                            <button type="submit" class="w-full px-4 py-2 bg-green-500 text-white rounded-xl text-sm hover:bg-green-600">Regenerate QR</button>
+                        </form>
                     </div>
                 @else
                     <div class="w-48 h-48 mx-auto bg-gray-100 dark:bg-dark-700 rounded-xl flex items-center justify-center">
