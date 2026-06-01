@@ -190,7 +190,8 @@ function scanner() {
 
             this.html5QrCode.stop();
 
-            this.scannedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const d = new Date();
+            this.scannedAt = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
 
             if (navigator.vibrate) navigator.vibrate(200);
 
