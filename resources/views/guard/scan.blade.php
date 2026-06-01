@@ -66,6 +66,7 @@
             <input type="hidden" name="checkpoint_code" x-model="checkpointCode">
             <input type="hidden" name="latitude" x-model="latitude">
             <input type="hidden" name="longitude" x-model="longitude">
+            <input type="hidden" name="scanned_at" x-model="scannedAt">
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
@@ -126,6 +127,7 @@ function scanner() {
         popup: { show: false, type: '', title: '', message: '' },
         submitting: false,
         clock: '',
+        scannedAt: '',
 
         init() {
             this.getLocation();
@@ -187,6 +189,8 @@ function scanner() {
             }
 
             this.html5QrCode.stop();
+
+            this.scannedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             if (navigator.vibrate) navigator.vibrate(200);
 

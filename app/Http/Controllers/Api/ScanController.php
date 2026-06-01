@@ -28,6 +28,7 @@ class ScanController extends Controller
             'notes' => 'nullable|string|max:500',
             'status' => 'required|in:safe,unsafe',
             'condition' => 'nullable|string|max:50',
+            'scanned_at' => 'nullable|date_format:Y-m-d H:i:s',
         ]);
 
         $checkpoint = Checkpoint::where('code', $validated['checkpoint_code'])->firstOrFail();
@@ -70,11 +71,13 @@ class ScanController extends Controller
             $photoPath = $request->file('photo')->store('patrol-photos', 'public');
         }
 
+        $scanTime = !empty($validated['scanned_at']) ? $validated['scanned_at'] : now();
+
         $log = PatrolLog::create([
             'patrol_id' => $patrol->id,
             'checkpoint_id' => $checkpoint->id,
             'guard_id' => $guard->id,
-            'scan_time' => now(),
+            'scan_time' => $scanTime,
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
             'distance' => $distance,

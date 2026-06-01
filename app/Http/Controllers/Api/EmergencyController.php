@@ -12,6 +12,35 @@ use Illuminate\Support\Facades\Notification;
 
 class EmergencyController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        $guard = $user->guardProfile;
+
+        $reports = EmergencyReport::with('guardRel.user')
+            ->where('guard_id', $guard->id)
+            ->latest()
+            ->paginate(20);
+
+        return response()->json([
+            'success' => true,
+            'data' => $reports,
+        ]);
+    }
+
+    public function show(EmergencyReport $report)
+    {
+        $user = Auth::user();
+        if ($report->guard_id !== $user->guardProfile->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $report->load('guardRel.user', 'responder'),
+        ]);
+    }
+
     public function sendSOS(Request $request)
     {
         $user = Auth::user();
