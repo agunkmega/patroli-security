@@ -27,7 +27,7 @@ class QRCodeService
         QrCode::format('png')
             ->size(400)
             ->margin(2)
-            ->color(233, 88, 12)
+            ->color(0, 0, 0)
             ->generate($qrData, Storage::disk('public')->path($path));
 
         $checkpoint->update([

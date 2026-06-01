@@ -25,6 +25,13 @@
       0 => 'Laravel\\Sail\\SailServiceProvider',
     ),
   ),
+  'laravel/tinker' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    ),
+  ),
   'maatwebsite/excel' => 
   array (
     'aliases' => 
